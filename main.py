@@ -1,15 +1,16 @@
 import random
+from constants import PLAYERS
 
 class GameLogic:
-    def __init__(self, level, field_size):
-        self.initial_coords = self.get_random_coordinates(level, field_size)
-        self.field_size = field_size
-        self.insects = ["fly", "bug", "spider"]
-        self.insects_numb = level
+    def __init__(self):
+        self.players = PLAYERS
         self.characters = dict()
-        for index, name in enumerate(self.insects[:level]):
+
+    def create_characters(self, level, field_size):
+        initial_coords = self.get_random_coordinates(level, field_size)
+        for index, name in enumerate(self.players[:level]):
             self.characters[name] = {
-                'position': self.initial_coords[index], # center indices
+                'position': initial_coords[index], # center indices
                 'if_out': False,
                 'steps': 0,
                 'steps_out': 0,
@@ -63,11 +64,11 @@ class GameLogic:
             if info['if_out']:
                 info['steps_out'] += 1
 
-    def start_game(self):
+    def start_game(self, level, field_size):
+        insects_numb = level
         i = 0
         while True:
-            self.make_step(self.insects[i])
-            i = (i + 1) % self.insects_numb
+
             # self.show_field()
             n = input()
             if n == "s":
@@ -75,7 +76,7 @@ class GameLogic:
                 break
 
 
-
-g = GameLogic(1, 5)
-g.show_field()
-g.start_game()
+#
+# g = GameLogic(1, 5)
+# g.show_field()
+# g.start_game()
