@@ -1,7 +1,7 @@
 import pygame
 from sys import exit
 from constants import (FPS, WIDTH, HEIGHT, PLAYERS, BUSH_STOP_IN_X, BUSH_STOP_OUT_X, TABLE_IN_SPEED, TABLE_OUT_SPEED,
-                       TABLE_INITIAL)
+                       TABLE_INITIAL, TABLE_IN_SPEED_CENTER)
 from draw_sprites import DrawScreen
 from main import GameLogic
 
@@ -52,8 +52,15 @@ class PygameLogic:
                         if self.game_status == "game":
                             self.game_status = "move_out"
                             self.draw_background()
-                            self.draw.draw_characters(self.game_level, self.game.characters)
+                            game_result = self.draw.draw_characters(self.game_level, self.game.characters)
                             self.draw.draw_leaves()
+
+                            if game_result:
+                                self.text_status = "won"
+                                self.table_speed = TABLE_IN_SPEED_CENTER
+                            else:
+                                self.text_status = "lose"
+                                self.table_speed = TABLE_IN_SPEED_CENTER
 
 
             if self.game_status == "lobby":
@@ -70,6 +77,10 @@ class PygameLogic:
             if self.game_status == "move_out":
                 if self.text_status == "greeting":
                     self.table_text = "Memorise!"
+                elif self.text_status == "won":
+                    self.table_text = "You won!"
+                elif self.text_status == "lose":
+                    self.table_text = "You lose"
 
                 self.draw_background()
                 self.draw.draw_characters(self.game_level, self.game.characters)

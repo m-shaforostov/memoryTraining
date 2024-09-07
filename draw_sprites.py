@@ -37,6 +37,9 @@ class DrawScreen:
         # self.fly_icon = pygame.image.load("./img/cell2.png").convert_alpha()
         # self.fly_icon = pygame.transform.scale(self.fly_icon, (CELL_SIZE, CELL_SIZE))
 
+        self.green_tick_icon = pygame.image.load("./img/green_tick.png").convert_alpha()
+        self.green_tick_icon = pygame.transform.scale(self.green_tick_icon, (CELL_SIZE / 4, CELL_SIZE / 4))
+
         self.table_icon = pygame.image.load("./img/long_board.png").convert_alpha()
         self.table_icon = pygame.transform.scale_by(self.table_icon, 0.5)
         self.table_rect = self.table_icon.get_rect(center = TABLE_INITIAL)
@@ -64,6 +67,7 @@ class DrawScreen:
                 self.screen.blit(self.cell_img, cell_rect)
 
     def draw_characters(self, number, characters):
+        message = True
         for i in range(number):
             x = characters[PLAYERS[i]]['position'][0]
             y = characters[PLAYERS[i]]['position'][1]
@@ -71,9 +75,19 @@ class DrawScreen:
             if characters[PLAYERS[i]]['if_out']:
                 character_rect = self.players_drowned_icons[i].get_rect(center=self.get_position(x, y))
                 self.screen.blit(self.players_drowned_icons[i], character_rect)
+                if characters[PLAYERS[i]]['steps_out'] == 0:
+                    green_tick_rect = self.green_tick_icon.get_rect(topleft=self.get_position(x, y))
+                    self.screen.blit(self.green_tick_icon, green_tick_rect)
+                else:
+                    steps_text_surface = self.pixel_font.render(str(characters[PLAYERS[i]]['steps_out']), False, "Red")
+                    steps_text_rect = steps_text_surface.get_rect(topleft=self.get_position(x, y))
+                    self.screen.blit(steps_text_surface, steps_text_rect)
+                    message = False
             else:
                 character_rect = self.players_icons[i].get_rect(center = self.get_position(x, y))
                 self.screen.blit(self.players_icons[i], character_rect)
+                message = False
+        return message
 
     def get_position(self, x, y):
         if x == 0:
