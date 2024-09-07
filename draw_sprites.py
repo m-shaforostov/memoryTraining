@@ -1,6 +1,6 @@
 import pygame
 from constants import (WIDTH, HEIGHT, FIELD_WIDTH, FIELD_HEIGHT, PLANKS_X, PLANKS_Y, PLANK_WIDTH, PLANK_HEIGHT,
-    CELLS_X, CELLS_Y, CELLS_GAP_X, CELLS_GAP_Y, CELL_SIZE, CELLS, PLAYERS, TABLE_INITIAL)
+    CELLS_X, CELLS_Y, CELLS_GAP_X, CELLS_GAP_Y, CELL_SIZE, CELLS, PLAYERS, TABLE_INITIAL, TABLE_HEIGHT)
 
 class DrawScreen:
     def __init__(self, screen):
@@ -28,6 +28,8 @@ class DrawScreen:
 
         self.fly_icon = pygame.image.load("./img/Fly.png").convert_alpha()
         self.fly_icon = pygame.transform.scale(self.fly_icon, (CELL_SIZE, CELL_SIZE))
+        self.fly_d_icon = pygame.image.load("./img/Fly_d.png").convert_alpha()
+        self.fly_d_icon = pygame.transform.scale(self.fly_d_icon, (CELL_SIZE, CELL_SIZE))
 
         # self.frog_icon = pygame.image.load("./img/cell2.png").convert_alpha()
         # self.frog_icon = pygame.transform.scale(self.frog_icon, (CELL_SIZE, CELL_SIZE))
@@ -40,7 +42,7 @@ class DrawScreen:
         self.table_rect = self.table_icon.get_rect(center = TABLE_INITIAL)
 
         self.players_icons = [self.fly_icon]
-        self.character_rects = []
+        self.players_drowned_icons = [self.fly_d_icon]
 
     def draw_leaves(self):
         self.screen.blit(self.bush_right_img, self.bush_right_rect)
@@ -66,10 +68,12 @@ class DrawScreen:
             x = characters[PLAYERS[i]]['position'][0]
             y = characters[PLAYERS[i]]['position'][1]
 
-            position_x, position_y = self.get_position(x, y)
-
-            self.character_rects.append(self.players_icons[i].get_rect(center=(position_x, position_y)))
-            self.screen.blit(self.players_icons[i], self.character_rects[i])
+            if characters[PLAYERS[i]]['if_out']:
+                character_rect = self.players_drowned_icons[i].get_rect(center=self.get_position(x, y))
+                self.screen.blit(self.players_drowned_icons[i], character_rect)
+            else:
+                character_rect = self.players_icons[i].get_rect(center = self.get_position(x, y))
+                self.screen.blit(self.players_icons[i], character_rect)
 
     def get_position(self, x, y):
         if x == 0:
@@ -87,25 +91,21 @@ class DrawScreen:
             position_y = initial_y + (CELL_SIZE + CELLS_GAP_Y * 2) * y
         return position_x, position_y
 
-    def move_character(self, number, characters):
-        for i in range(number):
-            x = characters[PLAYERS[i]]['position'][0]
-            y = characters[PLAYERS[i]]['position'][1]
-
-            position_x, position_y = self.get_position(x, y)
-
-            self.character_rects[i].center = (position_x, position_y)
-            self.screen.blit(self.players_icons[i], self.character_rects[i])
-
     def move_table(self, move_to, text):
         self.table_rect = self.table_rect.move(0, move_to)
         self.screen.blit(self.table_icon, self.table_rect)
 
-        self.table_text_surface = self.pixel_font.render(text, False, "White")
-        self.table_text_rect = self.table_text_surface.get_rect(center = self.table_rect.center)
-        self.screen.blit(self.table_text_surface, self.table_text_rect)
+        self.draw_table_text(text)
 
     def draw_table(self, text):
-        self.table_text_surface = self.pixel_font.render(text, False, "White")
         self.screen.blit(self.table_icon, self.table_rect)
-        self.screen.blit(self.table_text_surface, self.table_text_rect)
+        self.draw_table_text(text)
+
+    def draw_table_text(self, text):
+        text_arr = text.split('\n')
+        for index, line in enumerate(text_arr):
+            self.table_text_surface = self.pixel_font.render(line, False, "White")
+            x = self.table_rect.centerx
+            y = self.table_rect.centery - 50 * (len(text_arr) / 2 - 0.5)
+            self.table_text_rect = self.table_text_surface.get_rect(center=(x, y + 50 * index))
+            self.screen.blit(self.table_text_surface, self.table_text_rect)
