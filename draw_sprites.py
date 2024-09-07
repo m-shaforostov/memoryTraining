@@ -1,10 +1,15 @@
 import pygame
 from constants import (WIDTH, HEIGHT, FIELD_WIDTH, FIELD_HEIGHT, PLANKS_X, PLANKS_Y, PLANK_WIDTH, PLANK_HEIGHT,
-    CELLS_X, CELLS_Y, CELLS_GAP_X, CELLS_GAP_Y, CELL_SIZE, CELLS, PLAYERS)
+    CELLS_X, CELLS_Y, CELLS_GAP_X, CELLS_GAP_Y, CELL_SIZE, CELLS, PLAYERS, TABLE_INITIAL)
 
 class DrawScreen:
     def __init__(self, screen):
         self.screen = screen
+
+        self.pixel_font = pygame.font.Font(None, 50)
+
+        self.table_text_surface = self.pixel_font.render("", False, "White")
+        self.table_text_rect = self.table_text_surface.get_rect(center = TABLE_INITIAL)
 
         self.bush_right_img = pygame.image.load("./img/Bush_right2.png").convert_alpha()
         self.bush_right_rect = self.bush_right_img.get_rect(topright = (1100, 0))
@@ -29,6 +34,10 @@ class DrawScreen:
 
         # self.fly_icon = pygame.image.load("./img/cell2.png").convert_alpha()
         # self.fly_icon = pygame.transform.scale(self.fly_icon, (CELL_SIZE, CELL_SIZE))
+
+        self.table_icon = pygame.image.load("./img/long_board.png").convert_alpha()
+        self.table_icon = pygame.transform.scale_by(self.table_icon, 0.5)
+        self.table_rect = self.table_icon.get_rect(center = TABLE_INITIAL)
 
         self.players_icons = [self.fly_icon]
         self.character_rects = []
@@ -87,3 +96,16 @@ class DrawScreen:
 
             self.character_rects[i].center = (position_x, position_y)
             self.screen.blit(self.players_icons[i], self.character_rects[i])
+
+    def move_table(self, move_to, text):
+        self.table_rect = self.table_rect.move(0, move_to)
+        self.screen.blit(self.table_icon, self.table_rect)
+
+        self.table_text_surface = self.pixel_font.render(text, False, "White")
+        self.table_text_rect = self.table_text_surface.get_rect(center = self.table_rect.center)
+        self.screen.blit(self.table_text_surface, self.table_text_rect)
+
+    def draw_table(self, text):
+        self.table_text_surface = self.pixel_font.render(text, False, "White")
+        self.screen.blit(self.table_icon, self.table_rect)
+        self.screen.blit(self.table_text_surface, self.table_text_rect)
