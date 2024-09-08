@@ -6,6 +6,7 @@ class GameLogic:
         self.players = PLAYERS
         self.characters = dict()
         self.message = ""
+        self.current_step = 0
 
     def create_characters(self, level, field_size):
         initial_coords = self.get_random_coordinates(level, field_size)
@@ -51,6 +52,7 @@ class GameLogic:
         steps = random.choice([-1, 1])
         message_variation = ["to the left", "upwards", "to the right", "downwards"]
         self.message = name + " goes\n" + message_variation[axis + steps + 1]
+        self.current_step = axis + steps + 1
         if not self.characters[name]['if_out']:
             position = list(self.characters[name]['position'])
             position[axis] += steps

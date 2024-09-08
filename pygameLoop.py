@@ -4,6 +4,7 @@ from constants import (FPS, WIDTH, HEIGHT, PLAYERS, BUSH_STOP_IN_X, BUSH_STOP_OU
                        TABLE_INITIAL, TABLE_IN_SPEED_CENTER)
 from draw_sprites import DrawScreen
 from main import GameLogic
+from sound_logic import SoundEffects
 
 class PygameLogic:
     def __init__(self):
@@ -15,6 +16,7 @@ class PygameLogic:
 
         self.draw = DrawScreen(self.screen)
         self.game = GameLogic()
+        self.play = SoundEffects()
         self.game_status = "lobby"
         self.text_status = "greeting"
         self.table_text = ""
@@ -92,6 +94,13 @@ class PygameLogic:
                     self.speed_acceleration = 1
                     self.table_speed += TABLE_OUT_SPEED
 
+                    if self.text_status == "greeting":
+                        self.play.play_memorise()
+                    elif self.text_status == "won":
+                        self.play.play_result(1)
+                    elif self.text_status == "lose":
+                        self.play.play_result(0)
+
             if self.game_status == "move_in":
                 self.draw_background()
                 self.draw.draw_characters(self.game_level, self.game.characters)
@@ -102,6 +111,7 @@ class PygameLogic:
                     if self.text_status == "greeting":
                         self.game_status = "get_table"
                         self.text_status = "controllers_explanation"
+                        # self.play.play_left_btn()
                     elif self.text_status == "lose" or self.text_status == "won":
                         self.game_status = "start"
                         self.text_status = "greeting"
@@ -117,10 +127,12 @@ class PygameLogic:
 
                 if fl:
                     self.game_status = "game"
+                    # self.play.play_right_btn()
 
             if self.game_status == "step":
                 self.draw.draw_leaves()
                 self.draw.draw_table(self.table_text)
+                self.play.play_step(PLAYERS[self.players_turn], self.game.current_step)
                 self.game_status = "game"
 
             pygame.display.update()
