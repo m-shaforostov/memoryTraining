@@ -99,8 +99,12 @@ class PygameLogic:
                 self.move_table_out()
 
                 if fl:
-                    self.game_status = "get_table"
-                    self.text_status = "controllers_explanation"
+                    if self.text_status == "greeting":
+                        self.game_status = "get_table"
+                        self.text_status = "controllers_explanation"
+                    elif self.text_status == "lose" or self.text_status == "won":
+                        self.game_status = "start"
+                        self.text_status = "greeting"
                     self.speed_acceleration = 1
                     self.table_speed = TABLE_IN_SPEED
                     self.draw.table_rect.center = TABLE_INITIAL
