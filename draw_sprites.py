@@ -14,7 +14,7 @@ class DrawScreen:
         self.bush_right_img = pygame.image.load("./img/Bush_right2.png").convert_alpha()
         self.bush_right_rect = self.bush_right_img.get_rect(topright = (1100, 0))
 
-        self.bush_left_img = pygame.image.load("./img/Bush_left_shadowed.png").convert_alpha()
+        self.bush_left_img = pygame.image.load("./img/Bush_left.png").convert_alpha()
         self.bush_left_rect = self.bush_left_img.get_rect(topleft=(-100, 0))
 
         self.water_img = pygame.image.load("./img/Water.png").convert_alpha()  # background image

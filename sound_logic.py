@@ -15,7 +15,7 @@ class SoundEffects:
         self.fly_step_sounds = [self.fly_left_sound, self.fly_upwards_sound,
                                 self.fly_right_sound, self.fly_downwards_sound]
 
-        self.win_sound = pygame.mixer.Sound("./sounds/won.wav")
+        self.win_sound = pygame.mixer.Sound("./sounds/win.wav")
         self.lose_sound = pygame.mixer.Sound("./sounds/lose.wav")
 
     def play_step(self, character, direction):
