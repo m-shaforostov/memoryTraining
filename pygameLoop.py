@@ -6,6 +6,7 @@ from constants import (FPS, WIDTH, HEIGHT, PLAYERS, BUSH_STOP_IN_X, BUSH_STOP_OU
 from draw_characters import DrawCharacters
 from draw_sprites import DrawScreen
 from draw_table import DrawTable
+from lobby import Lobby
 from main import GameLogic
 from sound_logic import SoundEffects
 
@@ -17,6 +18,7 @@ class PygameLogic:
         pygame.display.set_caption('MindBlow')
         self.clock = pygame.time.Clock()
 
+        self.lobby = Lobby(self.screen)
         self.draw = DrawScreen(self.screen)
         self.character = DrawCharacters(self.screen)
         self.table = DrawTable(self.screen)
@@ -68,7 +70,8 @@ class PygameLogic:
 
             if self.game_status == "lobby":
                 self.draw.draw_leaves()
-                self.game_status = "start"
+                self.lobby.characters_selection()
+                # self.game_status = "start"
 
             if self.game_status == "start":
                 self.draw_background()
