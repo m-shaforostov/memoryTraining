@@ -39,6 +39,7 @@ class DrawTable:
 
     def move_table_in(self):
         if self.table_speed >= -15:
+            print(self.table_speed, 111)
             self.move_table(self.table_speed, self.table_text)
             self.table_speed -= self.speed_acceleration
             self.speed_acceleration += self.gravity_acceleration

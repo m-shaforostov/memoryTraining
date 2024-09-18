@@ -11,7 +11,7 @@ class Button:
 
         self.is_pressed = 0
 
-    def draw_button(self, screen):
+    def draw(self, screen):
         if self.is_hovered():
             if self.is_pressed:
                 image = self.pressed_image
