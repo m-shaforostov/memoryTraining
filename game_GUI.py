@@ -19,44 +19,27 @@ class GameGUI:
         self.characters_n = len(characters)
         self.cells_n = cells
 
-        self.game_status = "initiate"
-        self.status_actions = {
-            'initiate': self.initiate(),
-            'open_field': self.open_field(),
-        }
         self.text_status = ""
         self.whose_turn = 0
 
+        self.game_status = "initiate"
+        self.status_actions = {
+            'initiate': self.initiate,
+            'open_field': self.open_field,
+            'wait': self.wait_for_action,
+            'overlay': self.overlay_field,
+            'get_table': self.get_table,
+            'step': self.step,
+            'get_a_result': self.get_result,
+            'show_result': self.show_result,
+            'refresh': self.refresh_game,
+        }
+
 
     def draw_game(self):
-        if self.game_status == "initiate":
-            self.initiate()
-
-        if self.game_status == "open_field":
-            self.open_field()
-
-        if self.game_status == "wait":
-            self.wait_for_action()
-
-        if self.game_status == "overlay":
-            self.overlay_field("get_table")
-
-        if self.game_status == "get_table":
-            self.get_table()
-
-        if self.game_status == "step":
-            self.step()
-
-        if self.game_status == "get_a_result":
-            # self.open_field()
-            self.get_result()
-
-        if self.game_status == "show_result":
-            self.show_result()
-
-        if self.game_status == "refresh":
-            self.overlay_field("initiate")
-
+        exceptions = ['movement_info', 'wait', 'wait_for_new']
+        if self.game_status not in exceptions:
+            self.status_actions[self.game_status]()
 
     def initiate(self):
         self.draw_background()
@@ -92,7 +75,7 @@ class GameGUI:
         self.draw.leaves()
         self.table.draw_table(self.table.table_text)
 
-    def overlay_field(self, next):
+    def overlay_field(self):
         self.draw_background()
         self.character.draw_characters(self.characters_n, self.game.characters)
         fl = self.move_leaves_in()
@@ -102,7 +85,7 @@ class GameGUI:
             self.table.speed_acceleration = 1
             self.table.table_speed = TABLE_IN_SPEED
             self.table.table_rect.center = TABLE_INITIAL
-            self.game_status = next
+            self.game_status = "get_table"
 
     def get_table(self):
         # if self.text_status == "controllers_explanation":
@@ -125,6 +108,7 @@ class GameGUI:
 
     def get_result(self):
         result = self.character.draw_characters(self.characters_n, self.game.characters)
+        self.draw.leaves()
         if result:
             self.table.table_text = "You win!"
         else:
@@ -143,6 +127,18 @@ class GameGUI:
             self.table.speed_acceleration = 1
             self.table.table_speed += TABLE_OUT_SPEED
             self.game_status = "wait_for_new"
+
+    def refresh_game(self):
+        self.draw_background()
+        self.character.draw_characters(self.characters_n, self.game.characters)
+        fl = self.move_leaves_in()
+        self.table.move_table_out()
+
+        if fl:
+            self.table.speed_acceleration = 1
+            self.table.table_speed = TABLE_IN_SPEED
+            self.table.table_rect.center = TABLE_INITIAL
+            self.game_status = "initiate"
 
     def draw_background(self):
         self.draw.water()
