@@ -5,6 +5,7 @@ from game_logic import GameLogic
 
 from constants import TABLE_IN_SPEED, TABLE_OUT_SPEED, BUSH_STOP_OUT_X, BUSH_STOP_IN_X, TABLE_INITIAL, \
     TABLE_IN_SPEED_CENTER, PLAYERS
+from sound_logic import SoundEffects
 
 
 class GameGUI:
@@ -15,6 +16,7 @@ class GameGUI:
         self.character = DrawCharacters(self.screen)
         self.draw = DrawScreen(self.screen)
         self.table = DrawTable(self.screen)
+        self.play = SoundEffects()
 
         self.characters_n = len(characters)
         self.cells_n = cells
@@ -28,7 +30,7 @@ class GameGUI:
             'open_field': self.open_field,
             'wait': self.wait_for_action,
             'overlay': self.overlay_field,
-            'get_table': self.get_table,
+            'controllers_explanation': self.controllers_explanation,
             'step': self.step,
             'get_a_result': self.get_result,
             'show_result': self.show_result,
@@ -62,12 +64,8 @@ class GameGUI:
             self.table.table_speed += TABLE_OUT_SPEED
             self.game_status = "wait"
 
-            # if self.text_status == "greeting":
-            #     self.play.play_memorise()
-            # elif self.text_status == "won":
-            #     self.play.play_result(1)
-            # elif self.text_status == "lose":
-            #     self.play.play_result(0)
+            if self.table.table_text == "Memorise!":
+                self.play.play_memorise()
 
     def wait_for_action(self):
         self.draw_background()
@@ -85,10 +83,9 @@ class GameGUI:
             self.table.speed_acceleration = 1
             self.table.table_speed = TABLE_IN_SPEED
             self.table.table_rect.center = TABLE_INITIAL
-            self.game_status = "get_table"
+            self.game_status = "controllers_explanation"
 
-    def get_table(self):
-        # if self.text_status == "controllers_explanation":
+    def controllers_explanation(self):
         self.table.table_text = "Left btn - step\nRight btn - stop"
         self.draw.leaves()
         fl = self.table.move_table_in()
@@ -103,7 +100,7 @@ class GameGUI:
         self.game.make_step(PLAYERS[self.whose_turn])
         self.table.table_text = self.game.message
         self.table.draw_table(self.table.table_text)
-        # self.play.play_step(PLAYERS[self.players_turn], self.game.current_step)
+        self.play.play_step(PLAYERS[self.whose_turn], self.game.current_step)
         self.game_status = "movement_info"
 
     def get_result(self):
@@ -111,8 +108,10 @@ class GameGUI:
         self.draw.leaves()
         if result:
             self.table.table_text = "You win!"
+            self.play.play_result(1)
         else:
             self.table.table_text = "You lose!"
+            self.play.play_result(0)
         self.table.table_speed = TABLE_IN_SPEED
         self.table.speed_acceleration = 1
         self.game_status = "show_result"
